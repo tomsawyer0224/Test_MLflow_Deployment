@@ -1,8 +1,11 @@
 import mlflow
+from mlflow.models import convert_input_example_to_serving_input
 from sklearn.linear_model import SGDClassifier
 from datetime import datetime
 from mlflow.models import infer_signature, validate_serving_input
 import pandas as pd
+import os
+import json
 from data_module import Data_Module
 from pyfunc_flavor import MLflowModel
 
@@ -20,6 +23,20 @@ class Trainer:
         model_name = "pyfunc_model" if self.use_pyfunc_flavor else "sklearn_model"
         model_uri = f"runs:/{self.run_id}/{model_name}"
         return model_uri
+    @property
+    def serving_payload(self):
+        model_name = "pyfunc_model" if self.use_pyfunc_flavor else "sklearn_model"
+        # json_path = os.path.join(
+        #     "./mlartifacts", self.experiment_id, self.run_id, "artifacts", model_name, "serving_input_example.json"
+        # )
+        json_path = "./serving_input_example.json"
+        with open(json_path, "r") as f:
+            serving_input_example = json.load(f)
+        payload = json.dumps(serving_input_example)
+        # payload = convert_input_example_to_serving_input(
+        #     pd.DataFrame()
+        # )
+        return payload
     def _get_or_create_experiment(self, experiment_name: str) -> str:
         """
         gets an existing experiment or creates a new experiment
@@ -56,30 +73,7 @@ class Trainer:
                 )
         self.run_id = run.info.run_id
     def test(self):
-        serving_payload = """{
-"dataframe_split": {
-"columns": [
-    "sepal length (cm)",
-    "sepal width (cm)",
-    "petal length (cm)",
-    "petal width (cm)"
-],
-"data": [
-    [
-    4.6,
-    3.6,
-    1.0,
-    0.2
-    ],
-    [
-    5.7,
-    4.4,
-    1.5,
-    0.4
-    ]
-]
-}
-}"""
+        serving_payload = self.serving_payload
         # Validate the serving payload works on the model
         print("validate")
         predictions = validate_serving_input(self.model_uri, serving_payload)
@@ -95,7 +89,7 @@ if __name__=="__main__":
     trainer_sklearn = Trainer(use_pyfunc_flavor=False)
     trainer_sklearn.train()
     trainer_sklearn.test()
-
+    
     trainer_pyfunc = Trainer(use_pyfunc_flavor=True)
     trainer_pyfunc.train()
     trainer_pyfunc.test()
