@@ -25,7 +25,7 @@ class Trainer:
         return model_uri
     @property
     def serving_payload(self):
-        model_name = "pyfunc_model" if self.use_pyfunc_flavor else "sklearn_model"
+        #model_name = "pyfunc_model" if self.use_pyfunc_flavor else "sklearn_model"
         # json_path = os.path.join(
         #     "./mlartifacts", self.experiment_id, self.run_id, "artifacts", model_name, "serving_input_example.json"
         # )
@@ -69,7 +69,8 @@ class Trainer:
                 artifact_path = "pyfunc_model",
                 python_model = MLflowModel(self.model),
                 signature = signature,
-                input_example = input_example
+                input_example = input_example,
+                infer_code_paths = True
                 )
         self.run_id = run.info.run_id
     def test(self):
@@ -86,9 +87,9 @@ class Trainer:
         print(preds)
         print(f"score = {self.model.score(test_data, test_target)}")
 if __name__=="__main__":
-    trainer_sklearn = Trainer(use_pyfunc_flavor=False)
-    trainer_sklearn.train()
-    trainer_sklearn.test()
+    # trainer_sklearn = Trainer(use_pyfunc_flavor=False)
+    # trainer_sklearn.train()
+    # trainer_sklearn.test()
     
     trainer_pyfunc = Trainer(use_pyfunc_flavor=True)
     trainer_pyfunc.train()

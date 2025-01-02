@@ -15,7 +15,7 @@ payload = json.dumps(payload_dict)
 #     pd.DataFrame(np.random.rand(4,28*28))
 # )
 response = requests.post(
-    url=f"http://localhost:5001/invocations",
+    url=f"http://127.0.0.1:5001/invocations",
     data=payload,
     headers={"Content-Type": "application/json"},
 )
