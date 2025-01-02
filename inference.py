@@ -6,6 +6,7 @@ import requests
 import numpy as np
 import pandas as pd
 from mlflow.models import convert_input_example_to_serving_input
+from data_module import Data_Module
 
 exam_path = "./serving_input_example.json"
 with open(exam_path, "r") as f:
@@ -20,3 +21,15 @@ response = requests.post(
     headers={"Content-Type": "application/json"},
 )
 print(response.json())
+
+datasets = Data_Module()
+test_data, test_target = datasets.test_dataset
+inference_payload = convert_input_example_to_serving_input(test_data)
+
+response = requests.post(
+    url=f"http://127.0.0.1:5001/invocations",
+    data=inference_payload,
+    headers={"Content-Type": "application/json"},
+)
+print(response.json())
+print(test_target)

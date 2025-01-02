@@ -87,9 +87,9 @@ class Trainer:
         print(preds)
         print(f"score = {self.model.score(test_data, test_target)}")
 if __name__=="__main__":
-    # trainer_sklearn = Trainer(use_pyfunc_flavor=False)
-    # trainer_sklearn.train()
-    # trainer_sklearn.test()
+    trainer_sklearn = Trainer(use_pyfunc_flavor=False)
+    trainer_sklearn.train()
+    trainer_sklearn.test()
     
     trainer_pyfunc = Trainer(use_pyfunc_flavor=True)
     trainer_pyfunc.train()
