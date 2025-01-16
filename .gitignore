@@ -162,13 +162,13 @@ cython_debug/
 #.idea/
 
 # data folder
-digit_data/
-.digit_data/
+#digit_data/
+#.digit_data/
 mlruns/
 mlartifacts/*
 mlartifacts/
 mlartifacts
-/data
-/digit_data
+#/data
+#/digit_data
 
 catboost_info
